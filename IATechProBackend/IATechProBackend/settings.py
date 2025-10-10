@@ -32,7 +32,8 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'core',
-    'funcionario',
+    'Cliente',
+    'OrdemdeServico',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
