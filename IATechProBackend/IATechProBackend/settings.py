@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'core',
     'Cliente',
     'OrdemdeServico',
+    'funcionario',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
