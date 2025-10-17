@@ -8,7 +8,7 @@ class Funcionario(models.Model):
     telefone = models.CharField('Telefone', max_length=15)
     especialidade = models.CharField('Especialidade', max_length=50)
     data_admissao = models.DateField(auto_now_add=True)
-    ativo = models.CharField('Ativo', max_length=10)
+    ativo = models.BooleanField(default=True)
     salario = models.DecimalField('Salario', max_digits=10, decimal_places=2)
     cargo = models.CharField('Cargo', max_length=50)
     def __str__(self):

@@ -13,6 +13,7 @@ build/
 *.spec
 
 # Django
+bd.sqlite3
 *.log
 local_settings.py
 .env
