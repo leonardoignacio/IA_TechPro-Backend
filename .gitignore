@@ -14,6 +14,7 @@ build/
 
 # Django
 <<<<<<< HEAD
+<<<<<<< HEAD
 db.sqlite3
 =======
 <<<<<<< HEAD
@@ -22,6 +23,9 @@ bd.sqlite3
 db.sqlite3
 >>>>>>> 0225000cbd4c78582e08be3c37b3b3f127a18ef3
 >>>>>>> 3c83ce57ad1294e109df156c36f9fe5a3c300adf
+=======
+db.sqlite3
+>>>>>>> a6de44ce1b3a6cc73f895df7a60946d00a32003a
 *.log
 local_settings.py
 .env
