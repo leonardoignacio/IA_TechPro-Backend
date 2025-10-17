@@ -1,6 +1,6 @@
 from django.urls import path
-from funcionario.views import index
+from .views import funcionario
 
 urlpatterns = [
-    path('api/funcionario', index)
+    path('api/funcionario', funcionario)
 ]
