@@ -1,6 +1,6 @@
-from django.urls import admin
+from django.urls import path
 from .views import cliente
 
 urlpatterns = [
-    path('api/cliente', cliente)
+    path('', cliente)
 ]
