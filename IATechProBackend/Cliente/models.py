@@ -6,7 +6,7 @@ class Cliente(models.Model):
     nome = models.CharField('Nome',max_length=50)
     cep = models.CharField('CEP', max_length=10)
     data_cadastro = models.DateField(auto_now_add=True)
-    email = models.CharField('E-mail', max_length=30)
+    email = models.EmailField('E-mail', max_length=30, unique=True)
     telefone = models.CharField('Telefone', max_length=15)
     estado = models.CharField('Estado', max_length=2)
     endereco = models.CharField('Endereço', max_length=50)

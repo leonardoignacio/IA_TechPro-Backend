@@ -4,7 +4,7 @@ from django.db import models
 class Funcionario(models.Model):
     nome = models.CharField('Nome', max_length=50)
     cpf = models.CharField('CPF', max_length=15)
-    email = models.CharField('E-mail', max_length=30)
+    email = models.EmailField('E-mail', max_length=30, unique=True)
     telefone = models.CharField('Telefone', max_length=15)
     especialidade = models.CharField('Especialidade', max_length=50)
     data_admissao = models.DateField(auto_now_add=True)
