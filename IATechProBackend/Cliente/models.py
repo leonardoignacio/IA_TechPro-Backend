@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Cliente(models.Model):
-    ativo = models.CharField('Ativo', max_length=10)
+    ativo = models.BooleanField(default=True)
     nome = models.CharField('Nome',max_length=50)
     cep = models.CharField('CEP', max_length=10)
     data_cadastro = models.DateField(auto_now_add=True)
