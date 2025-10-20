@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import funcionario
+from .views import *
 
 urlpatterns = [
-    path('', funcionario, name="funcionario")
+    path('', py_obter_fucnionarios, name="funcionario")
 ]
