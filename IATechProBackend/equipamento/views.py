@@ -20,7 +20,7 @@ def _serialize_Equipamento(equipamento):
     }
 
 @api_view(['GET'])
-def py_obter_Equipamentos(request, id_equipamento=None):
+def py_obter_equipamento(request, id_equipamento=None):
     if id_equipamento:
         try:
             equipamento = Equipamento.objects.get(pk=id_equipamento)
@@ -32,3 +32,38 @@ def py_obter_Equipamentos(request, id_equipamento=None):
         equipamento = Equipamento.objects.all()
         equipamento_data = [_serialize_Equipamento(equipamento) for equipamento in equipamento]
         return Response({'equipamento':equipamento_data})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def py_cria_equipamento(request):
+    data = request.data
+    equipamento = Equipamento.objects.create(
+        id_equipamento=data.get('id_equipamento'),
+        modelo_marca=data.get('modelo_marca'),
+        patrimonio=data.get('patrimonio'),
+        num_serie=data.get('num_serie'),
+    )
+    return Response({'status': 'success', 'id_equipameto': id.equipamento}, status=201)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def py_deleta_equipamento(request, id_equipamento):
+    """
+    Função para deletar um equipamento especifico.
+    """
+    equipamento = get_object_or_404(Equipamento, pk=id_equipamento)
+    equipamento.delete()
+    return Response({'status': 'success', 'message': f'Equipamento com ID {id_equipamento} deletado com sucesso.' })
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def py_edita_equipamento(request, id_equipamento):
+    equipamento = get_object_or_404(Equipamento, pk=id_equipamento)
+    data = request.data
+    # Atualiza apenas os campos presentes no JSON
+    equipamento.id_equipamento = data.get('id_equipamento', equipamento.id_equipamento)
+    equipamento.modelo_marca = data.get('modelo_marca', equipamento.modelo_marca)
+    equipamento.patrimonio = data.get('patrimonio', equipamento.patrimonio)
+    equipamento.num_serie = data.get('num_serie', equipamento.num_serie)
+    equipamento.save()
+    return Response({'status': 'success', 'message': f'Equipamento com ID {id_equipamento} atualizado com sucesso.'})
