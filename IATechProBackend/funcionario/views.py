@@ -25,7 +25,6 @@ def _serialize_funcionario(funcionario):
 
 # Create your views here.
 @api_view(['GET'])
-
 def py_obter_funcionarios(request, funcionario_id=None):
     if funcionario_id:
         try:
