@@ -23,8 +23,6 @@ def _serialize_funcionario(funcionario):
         'cargo': funcionario.cargo,
     }
 
-
-
 # Create your views here.
 @api_view(['GET'])
 
