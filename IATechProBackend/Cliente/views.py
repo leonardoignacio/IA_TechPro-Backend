@@ -39,3 +39,50 @@ def py_cliente(request, cliente_id=None):
         cliente = Cliente.objects.all()
         cliente_data = [_serialize(cliente) for cliente in cliente]
         return Response({'clientes': cliente_data})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def py_cliente(request):
+    data = request.data
+    cliente = Cliente.objects.create(
+        ativo=data.get('ativo', True),
+        nome=data.get('nome'),
+        cep=data.get('cep'),
+        data_cadastro=data.get('data_cadastro'),
+        email=data.get('email'),
+        telefone=data.get('telefone'),
+        estado=data.get('estado'),
+        endereco=data.get('endereco'),
+        cpf_cnpj=data.get('cpf_cnpj'),
+        cidade=data.get('cidade'),
+    )
+    return Response({'status': 'success', 'id_cliente': id.cliente}, status=201)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def py_delete_cliente(request, id_cliente):
+    """
+    Função para deletear um prato específico.
+    """
+    cliente = get_object_or_404(Cliente, pk=id_cliente)
+    cliente.delete()
+    return Response({'status': 'success', 'message': f'Cliente com ID {id_cliente} deletado com sucesso.'})
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def py_edita_cliente(request, id_cliente):
+    cliente = get_object_or_404(Cliente, pk=id_cliente)
+    data = request.data
+    # Atualiza apenas os campos presentes no JSON
+    cliente.ativo = data.get('ativo', cliente.ativo)
+    cliente.nome = data.get('nome', cliente.nome)
+    cliente.cep = data.get('cep', cliente.cep)
+    cliente.data_cadastro = data.get('data_cadastro', cliente.data_cadastro)
+    cliente.email = data.get('email', cliente.email)
+    cliente.telefone = data.get('telefone', cliente.telefone)
+    cliente.estado = data.get('estado', cliente.estado)
+    cliente.endereco = data.get('endereco', cliente.endereco)
+    cliente.cpf_cnpj = data.get('cpf_cnpj', cliente.cpf_cnpj)
+    cliente.cidade = data.get('cidade', cliente.cidade)
+    cliente.save()
+    return Response({'status': 'success', 'message': f'Cliente com ID {id_cliente} atualizado com sucesso.'})
