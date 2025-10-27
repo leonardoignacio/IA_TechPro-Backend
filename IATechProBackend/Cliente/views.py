@@ -42,7 +42,7 @@ def py_cliente(request, cliente_id=None):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def py_cliente(request):
+def py_cliente_criar(request):
     data = request.data
     cliente = Cliente.objects.create(
         ativo=data.get('ativo', True),
