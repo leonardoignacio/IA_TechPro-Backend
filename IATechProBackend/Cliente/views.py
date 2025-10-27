@@ -56,7 +56,7 @@ def py_cliente(request):
         cpf_cnpj=data.get('cpf_cnpj'),
         cidade=data.get('cidade'),
     )
-    return Response({'status': 'success', 'id_cliente': id.cliente}, status=201)
+    return Response({'status': 'success', 'id_cliente': cliente.id}, status=201)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

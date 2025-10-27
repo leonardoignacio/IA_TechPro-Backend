@@ -10,20 +10,20 @@ from rest_framework.response import Response
 from .models import OrdemdeServico
 # Create your views here.
 
-def _serialize(OrdemdeServico):
+def _serialize(os):
     return {
-        'data_de_conclusao': OrdemdeServico.data_conclusao,
-        'status': OrdemdeServico.status,
-        'data_criacao': OrdemdeServico.data_criacao,
-        'prioridade': OrdemdeServico.prioridade,
-        'observacao': OrdemdeServico.observacao,
-        'diagnostico': OrdemdeServico.diagnostico,
-        'categoria': OrdemdeServico.categoria,
-        'problema_relatado': OrdemdeServico.problema_relatado,
-        'valor_servico': OrdemdeServico.valor_servico,
-        'cliente': OrdemdeServico.cliente,
-        'equipamento': OrdemdeServico.equipamento,
-        'funcionario': OrdemdeServico.funcionario,
+        'data_de_conclusao': os.data_conclusao,
+        'status': os.status,
+        'data_criacao': os.data_criacao,
+        'prioridade': os.prioridade,
+        'observacao': os.observacao,
+        'diagnostico': os.diagnostico,
+        'categoria': os.categoria,
+        'problema_relatado': os.problema_relatado,
+        'valor_servico': os.valor_servico,
+        'cliente': os.cliente,
+        'equipamento': os.equipamento,
+        'funcionario': os.funcionario,
     }  
 
 
@@ -46,22 +46,22 @@ def ordemservico_pyCriar(request):
         equipamento=data.get('equipamento'),
         funcionario=request.user #Associa a OS ao usuário logado,
     )
-    return Response({"mensagem": "OSs funcionando!"})
+    return Response({'status': 'success', 'id_cliente': ordemservico.id}, status=201)
 
 
 @api_view(['GET'])
 def py_OrdemdeServico(request, id_ordem=None):
     if id_ordem:
         try:
-            OrdemdeServico = OrdemdeServico.objects.get(pk=id_ordem)
-            OrdemdeServico_data = _serialize(OrdemdeServico)
-            return Response({'Ordem': id_ordem})
+            ordemdeServico = OrdemdeServico.objects.get(pk=id_ordem)
+            ordemdeServico_data = _serialize(ordemdeServico)
+            return Response({'Ordem': ordemdeServico_data})
         except OrdemdeServico.DoesNotExist:
             return Response({'error': 'Ordem não encontrado.'}, status=404)
     else:
-        OrdemdeServico = OrdemdeServico.objects.all()
-        OrdemdeServico = [_serialize(OrdemdeServico) for OrdemdeServico in OrdemdeServico]
-        return Response({'Ordem': id_ordem})
+        ordemdeServico = OrdemdeServico.objects.all()
+        ordemdeServico_data = [_serialize(ordemdeServico) for ordemdeServico in ordemdeServico]
+        return Response({'Ordem': ordemdeServico_data})
 
 
 
@@ -69,30 +69,30 @@ def py_OrdemdeServico(request, id_ordem=None):
 @permission_classes([IsAuthenticated])
 def py_delete_OrdemdeServico(request, id_ordem):
 
-    OrdemdeServico = get_object_or_404(OrdemdeServico, pk=id_ordem)
-    OrdemdeServico.delete()
+    ordemdeServico = get_object_or_404(OrdemdeServico, pk=id_ordem, ordemdeServico=request.user)
+    ordemdeServico.delete()
     return Response({'status': 'success', 'message': f'Ordem de serviço {id_ordem} deletado com sucesso.'})
 
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def py_edita_OrdemdeServico(request, id_ordem):
-    OrdemdeServico = get_object_or_404(OrdemdeServico, pk=id_ordem)
+    ordemdeServico = get_object_or_404(OrdemdeServico, pk=id_ordem)
     data = request.data
     # Atualiza apenas os campos presentes no JSON
-    OrdemdeServico.data_de_conclusao = data.get('Conclusão', OrdemdeServico.data_de_conclusao)
-    OrdemdeServico.status = data.get('Status', OrdemdeServico.status)
-    OrdemdeServico.data_criacao = data.get('Data da Criação', OrdemdeServico.data_criacao)
-    OrdemdeServico.prioridade = data.get('Prioridade', OrdemdeServico.prioridade)
-    OrdemdeServico.observacao = data.get('Observação', OrdemdeServico.observacao)
-    OrdemdeServico.diagnostico = data.get('diagnostico', OrdemdeServico.diagnostico)
-    OrdemdeServico.categoria = data.get('Categoria', OrdemdeServico.categoria)
-    OrdemdeServico.problema_relatado = data.get('Problema', OrdemdeServico.problema_relatado)
-    OrdemdeServico.valor_servico = data.get('Valor', OrdemdeServico.valor_servico)
-    OrdemdeServico.cliente = data.get('cliente', OrdemdeServico.cliente)
-    OrdemdeServico.equipamento = data.get('equipamento', OrdemdeServico.equipamento)
-    OrdemdeServico.funcionario = data.get('funcionario', OrdemdeServico.funcionario)
-    OrdemdeServico.save()
+    ordemdeServico.status = data.get('Status', ordemdeServico.status)
+    ordemdeServico.data_de_conclusao = data.get('Conclusão', ordemdeServico.data_de_conclusao)
+    ordemdeServico.data_criacao = data.get('Data da Criação', ordemdeServico.data_criacao)
+    ordemdeServico.prioridade = data.get('Prioridade', ordemdeServico.prioridade)
+    ordemdeServico.observacao = data.get('Observação', ordemdeServico.observacao)
+    ordemdeServico.diagnostico = data.get('diagnostico', ordemdeServico.diagnostico)
+    ordemdeServico.categoria = data.get('Categoria', ordemdeServico.categoria)
+    ordemdeServico.problema_relatado = data.get('Problema', ordemdeServico.problema_relatado)
+    ordemdeServico.valor_servico = data.get('Valor', ordemdeServico.valor_servico)
+    ordemdeServico.cliente = data.get('cliente', ordemdeServico.cliente)
+    ordemdeServico.equipamento = data.get('equipamento', ordemdeServico.equipamento)
+    ordemdeServico.funcionario = data.get('funcionario', ordemdeServico.funcionario)
+    ordemdeServico.save()
     return Response({'status': 'success', 'message': f'Ordem com ID {id_ordem} atualizado com sucesso.'})
 
 
