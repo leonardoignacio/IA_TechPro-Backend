@@ -7,5 +7,5 @@ urlpatterns = [
     # Rotas para o CRUD de pratos
     path('cria-ordem', ordemservico_pyCriar, name='cria_ordem'),
     path('deleta/<int:id_ordem>', py_delete_OrdemdeServico, name='deleta_ordem'),
-    path('atualiza/<int:id_ordem', py_edita_OrdemdeServico, name='edita_ordem'),
+    path('atualiza/<int:id_ordem>', py_edita_OrdemdeServico, name='edita_ordem'),
 ]
