@@ -16,6 +16,11 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+<<<<<<< HEAD
     
 
     # "cpf:"", "username:"", "password:"", "first_name:"#, "email:"""
+=======
+
+# "cpf":"", "username":"", "password":"", "first_name":"", "email":""
+>>>>>>> 1beb8aa51a2b16650fc234efb5a2178008629ce1
