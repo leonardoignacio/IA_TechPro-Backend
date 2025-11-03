@@ -5,8 +5,8 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 
-from funcionario.models import Funcionario
-from funcionario.serializers import FuncionarioSerializer
+from .models import Funcionario
+from .serializers import FuncionarioSerializer
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
