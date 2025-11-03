@@ -1,10 +1,11 @@
 from django.contrib import admin
 from .models import Funcionario
-# Register your models here.
 
-#class FuncionarioAdmin(admin.ModelAdmin):
- #   list_display=('nome', 'cpf', 'email', 'cargo', 'telefone', 'ativo')
- #   search_fields=('nome', 'cpf', 'email', 'cargo', 'telefone', 'ativo')
- #   list_filter=('nome', 'cpf', 'email', 'cargo', 'telefone', 'ativo')
-
-admin.site.register(Funcionario) # FuncionarioAdmin
+@admin.register(Funcionario)
+class FuncionarioAdmin(admin.ModelAdmin):
+    list_display = ('id', 'especialidade', 'cargo', 'salario', 'data_admissao', 'user')
+    list_display_links = ('id', 'especialidade', 'cargo')
+    search_fields = ('especialidade', 'cargo', 'user__first_name', 'user__email')
+    list_filter = ('especialidade', 'cargo', 'data_admissao')
+    ordering = ('-data_admissao',)
+    list_per_page = 25
