@@ -1,10 +1,24 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 from .models import Cliente
 
-# Register your models here.
+@admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
-    list_display=('ativo','nome','cep','email','telefone','estado','cpf_cnpj','cidade')
-    search_fields=('ativo','nome','cep','email','telefone','estado','cpf_cnpj','cidade')
-    list_filter=('ativo','nome','cep','email','telefone','estado','cpf_cnpj','cidade')
+    list_display = ('nome', 'email', 'telefone', 'cidade', 'estado', 'ativo')
+    list_display_links = ('nome',)
+    search_fields = ('nome', 'email', 'telefone', 'cidade')
+    list_filter = ('ativo', 'estado', 'cidade')
+    readonly_fields = ('data_cadastro',)
+    date_hierarchy = 'data_cadastro'
 
-admin.site.register(Cliente, ClienteAdmin)
+    fieldsets = (
+        (_('Dados Pessoais'), {
+            'fields': ('nome', 'cpf_cnpj', 'data_cadastro', 'ativo')
+        }),
+        (_('Contato'), {
+            'fields': ('email', 'telefone')
+        }),
+        (_('Endereço'), {
+            'fields': ('cep', 'endereco', 'cidade', 'estado')
+        }),
+    )
