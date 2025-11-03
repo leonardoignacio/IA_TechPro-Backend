@@ -2,5 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-    cpf = models.CharField(max_length=200, unique=True) 
-    endereco = models.CharField(max_length=200)
+    cpf_cnpj = models.CharField(max_length=200, unique=True) 
+    telefone = models.CharField('Telefone', max_length=15)
+    logradouro = models.CharField('Logradouro',max_length=200)
+    cep = models.CharField('CEP', max_length=10)
+    cidade = models.CharField('Cidade', max_length=50)
+    estado = models.CharField('Estado', max_length=2)
+    

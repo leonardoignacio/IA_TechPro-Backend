@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+
 class Cliente(models.Model):
+
     # Dados pessoais
     nome = models.CharField(_('Nome'), max_length=50)
     cpf_cnpj = models.CharField(_('CPF/CNPJ'), max_length=16, help_text=_('Informe o CPF ou CNPJ do cliente'))
