@@ -8,4 +8,4 @@ class Cliente(models.Model):
     setor = models.CharField('Setor', max_length=50)
 
     def __str__(self):
-        return f'{self.nome} {self.email}'
+        return f'{self.user} {self.empresa} {self.setor}'

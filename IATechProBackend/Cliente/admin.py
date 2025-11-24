@@ -6,4 +6,4 @@ from .models import Cliente
 class ClienteAdmin(admin.ModelAdmin):
     list_display = ('id', 'user__username','user__first_name', 'empresa', 'setor', 'user')
     search_fields = ('empresa', 'setor', 'user__username')
-    list_filter = ('setor', 'empresa')
+    list_filter = ('user__username','user__first_name','setor', 'empresa')

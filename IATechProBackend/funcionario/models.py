@@ -8,4 +8,4 @@ class Funcionario(models.Model):
     cargo = models.CharField('Cargo', max_length=50)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
-        return f'{self.nome} {self.cargo}'
+        return f'{self.user} {self.cargo} {self.especialidade}'
