@@ -23,7 +23,7 @@ class ClienteCreateView(generics.CreateAPIView):
 
         # Criando usuário
         user = User.objects.create_user(
-            username=serializer.validated_data["cpf_cnpj"],
+            username=serializer.validated_data["username"],
             email=serializer.validated_data.get("email", ""),
             password=serializer.validated_data["password"],
             cpf_cnpj=serializer.validated_data["cpf_cnpj"],
@@ -60,7 +60,7 @@ class ClienteDetailView(generics.RetrieveAPIView):
 
 class ClienteUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = ClienteCreateSerializer  # Reutilizo para validação
+    serializer_class = ClienteCreateSerializer  
 
     def get_queryset(self):
         return Cliente.objects.filter(user__is_active=True)
