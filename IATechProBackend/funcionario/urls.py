@@ -1,10 +1,16 @@
 from django.urls import path
-from .views import *
+from .views import (
+    FuncionarioCreateView,
+    FuncionarioListView,
+    FuncionarioDetailView,
+    FuncionarioUpdateView,
+    FuncionarioDeleteView
+)
 
 urlpatterns = [
-    path('registros/', listar_funcionarios, name="funcionario"),
-    path('registros/<int:funcionario_id>', listar_funcionarios, name="funcionario_detalhe"),
-    path('cria-funcionario', criar_funcionario, name="cria_funcionario"),
-    path('deleta/<int:funcionario_id>', deletar_funcionario, name="deleta_funcionario"),
-    path('atualiza/<int:funcionario_id>', editar_funcionario, name="edita_funcionario"),
+    path("create/", FuncionarioCreateView.as_view(), name="funcionario-create"),
+    path("list/", FuncionarioListView.as_view(), name="funcionario-list"),
+    path("<int:pk>/", FuncionarioDetailView.as_view(), name="funcionario-detail"),
+    path("<int:pk>/update/", FuncionarioUpdateView.as_view(), name="funcionario-update"),
+    path("<int:pk>/delete/", FuncionarioDeleteView.as_view(), name="funcionario-delete"),
 ]

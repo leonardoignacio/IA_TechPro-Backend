@@ -5,3 +5,4 @@ djangorestframework_simplejwt
 PyJWT
 sqlparse
 tzdata
+drf-spectacular

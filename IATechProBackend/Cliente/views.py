@@ -1,46 +1,77 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+# cliente/views.py
+from rest_framework import generics, status
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.db import transaction
+
 from .models import Cliente
+from .serializers import ClienteSerializer, ClienteCreateSerializer
+from core.models import User
 
-from .serializers import serialize_cliente
 
-@api_view(['GET'])
-def py_cliente(request, cliente_id=None):
-    if cliente_id:
-        cliente = get_object_or_404(Cliente, pk=cliente_id)
-        return Response({'cliente': serialize_cliente(cliente)})
-    else:
-        clientes = Cliente.objects.all()
-        return Response({'clientes': [serialize_cliente(c) for c in clientes]})
+class ClienteCreateView(generics.CreateAPIView):
+    """
+    Rota aberta para criar um cliente (e automaticamente um User).
+    """
+    permission_classes = [AllowAny]
+    serializer_class = ClienteCreateSerializer
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def py_cliente_criar(request):
-    data = request.data
-    cliente = Cliente.objects.create(
-        empresa=data.get('empresa'),
-        setor=data.get('setor'),
-        user=data.get('user') #request.user  
-    )
-    return Response({'status': 'success', 'id_cliente': cliente.id}, status=201)
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        serializer = ClienteCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def py_delete_cliente(request, id_cliente):
-    cliente = get_object_or_404(Cliente, pk=id_cliente, user=request.user)
-    cliente.delete()
-    return Response({'status': 'success', 'message': f'Cliente com ID {id_cliente} deletado com sucesso.'})
+        # Criando usuário
+        user = User.objects.create_user(
+            username=serializer.validated_data["cpf_cnpj"],
+            email=serializer.validated_data.get("email", ""),
+            password=serializer.validated_data["password"],
+            cpf_cnpj=serializer.validated_data["cpf_cnpj"],
+            telefone=serializer.validated_data["telefone"],
+            logradouro=serializer.validated_data["logradouro"],
+            cep=serializer.validated_data["cep"],
+            cidade=serializer.validated_data["cidade"],
+            estado=serializer.validated_data["estado"],
+        )
 
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated])
-def py_edita_cliente(request, id_cliente):
-    cliente = get_object_or_404(Cliente, pk=id_cliente)
-    data = request.data
+        # Criando cliente vinculado
+        cliente = Cliente.objects.create(
+            user=user,
+            empresa=serializer.validated_data["empresa"],
+            setor=serializer.validated_data["setor"],
+        )
 
-    cliente.empresa = data.get('empresa', cliente.empresa)
-    cliente.setor = data.get('setor', cliente.setor)
-    cliente.save()
+        return Response(ClienteSerializer(cliente).data, status=status.HTTP_201_CREATED)
 
-    return Response({'status': 'success', 'message': f'Cliente com ID {id_cliente} atualizado com sucesso.'})
+
+class ClienteListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClienteSerializer
+
+    def get_queryset(self):
+        return Cliente.objects.filter(user__is_active=True)
+
+
+class ClienteDetailView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClienteSerializer
+    queryset = Cliente.objects.filter(user__is_active=True)
+
+
+class ClienteUpdateView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClienteCreateSerializer  # Reutilizo para validação
+
+    def get_queryset(self):
+        return Cliente.objects.filter(user__is_active=True)
+
+
+class ClienteDeleteView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Cliente.objects.all()
+
+    def delete(self, request, *args, **kwargs):
+        cliente = self.get_object()
+        cliente.user.is_active = False
+        cliente.user.save()
+        return Response({"detail": "Cliente desativado."}, status=status.HTTP_204_NO_CONTENT)

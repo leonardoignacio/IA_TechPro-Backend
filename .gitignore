@@ -38,6 +38,4 @@ ENV/
 env/
 .venv/
 
-# Migrations (optional: if you regenerate them often)
-**/migrations/*.py
-!**/migrations/__init__.py
+

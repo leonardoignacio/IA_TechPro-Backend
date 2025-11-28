@@ -5,14 +5,14 @@ from .models import User
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     # Campos que serão exibidos na listagem
-    list_display = ('username', 'email', 'cpf_cnpj', 'telefone', 'cidade', 'estado', 'is_staff')
+    list_display = ('username', 'email', 'role', 'cpf_cnpj', 'telefone', 'cidade', 'estado', 'is_staff')
 
     # Campos que podem ser usados para busca
-    search_fields = ('username', 'email', 'cpf_cnpj', 'telefone')
+    search_fields = ('username', 'email', 'cpf_cnpj', 'telefone', 'role')
 
     # Organização dos campos nos formulários
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
+        (None, {'fields': ('username', 'password', 'role')}),
         ('Informações pessoais', {
             'fields': (
                 'first_name', 'last_name', 'email',
@@ -31,7 +31,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': (
-                'username', 'email', 'password1', 'password2',
+                'username', 'email', 'password1', 'password2', 'role',
                 'cpf_cnpj', 'telefone', 'logradouro',
                 'cep', 'cidade', 'estado'
             ),

@@ -1,15 +1,10 @@
-from django.contrib import admin
+# core/urls.py
 from django.urls import path
-from .views import *
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from core.views import MeView
 
 urlpatterns = [
-    path('', index, name='home'),
-    #path('user-auth/', current_user_view, name='current-user'),
-
-    # Novas rotas para o modelo User
-    path('usuarios/', py_obter_usuarios, name='listar-usuarios'),
-    path('usuarios/<int:user_id>/', py_obter_usuarios, name='detalhar-usuario'),
-    path('usuarios/criar/', py_criar_usuario, name='criar-usuario'),
-    path('usuarios/<int:user_id>/editar/', py_edita_usuario, name='editar-usuario'),
-    path('usuarios/<int:user_id>/deletar/', py_deleta_usuario, name='deletar-usuario'),
+    path("auth/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("auth/me/", MeView.as_view(), name="auth-me"),
 ]

@@ -29,3 +29,67 @@ urlpatterns = [
     path('', include('core.urls'))
 
 ]
+
+
+'''
+
+| Ação                  | Método | Rota                        |
+| --------------------- | ------ | --------------------------- |
+| Login                 | POST   | `/auth/login/`              |
+| Refresh               | POST   | `/auth/refresh/`            |
+| Me                    | GET    | `/auth/me/`                 |
+| Criar Funcionário     | POST   | `/funcionario/create/`      |
+| Listar Funcionários   | GET    | `/funcionario/list/`        |
+| Detalhar Funcionário  | GET    | `/funcionario/<id>/`        |
+| Atualizar Funcionário | PUT    | `/funcionario/<id>/update/` |
+| Desativar Funcionário | DELETE | `/funcionario/<id>/delete/` |
+| Criar Cliente         | POST   | `/cliente/create/`          |
+| Listar Clientes       | GET    | `/cliente/`                 |
+| Detalhar Cliente      | GET    | `/cliente/<id>/`            |
+| Atualizar Cliente     | PUT    | `/cliente/<id>/update/`     |
+| Desativar Cliente     | DELETE | `/cliente/<id>/delete/`     |
+
+
+Login
+{
+  "username": "cpf_ou_cnpj",
+  "password": "senha"
+}
+
+Funcionario
+{
+  "username": "joao.func",
+  "password": "123456",
+  "email": "joao@example.com",
+  "first_name": "João",
+  "last_name": "Silva",
+  "cpf_cnpj": "12345678900",
+  "telefone": "11999990000",
+  "logradouro": "Rua A",
+  "cep": "12345678",
+  "cidade": "São Paulo",
+  "estado": "SP",
+  "especialidade": "TI",
+  "cargo": "Analista",
+  "salario": 5000.00
+}
+
+Cliente
+{
+  "username": "cliente01",
+  "password": "123456",
+  "email": "cliente@example.com",
+  "first_name": "Carlos",
+  "last_name": "Ferreira",
+  "cpf_cnpj": "99911122233",
+  "telefone": "11988887777",
+  "logradouro": "Rua XPTO",
+  "cep": "11000000",
+  "cidade": "Santos",
+  "estado": "SP",
+  "empresa": "TechPro",
+  "setor": "Compras"
+}
+
+
+'''

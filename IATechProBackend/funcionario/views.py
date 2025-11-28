@@ -1,50 +1,122 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
 from django.db import transaction
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
 
+from core.models import User
 from .models import Funcionario
-from .serializers import FuncionarioSerializer
+from .serializers import FuncionarioSerializer, FuncionarioCreateSerializer
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def listar_funcionarios(request, funcionario_id=None):
-    if funcionario_id:
-        funcionario = get_object_or_404(Funcionario, pk=funcionario_id)
-        serializer = FuncionarioSerializer(funcionario)
-        return Response({'funcionario': serializer.data})
-    
-    funcionarios = Funcionario.objects.all()
-    serializer = FuncionarioSerializer(funcionarios, many=True)
-    return Response({'funcionarios': serializer.data})
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def criar_funcionario(request):
-    serializer = FuncionarioSerializer(data=request.data)
-    if serializer.is_valid():
-        with transaction.atomic():
-            serializer.save(user=request.user)
-        return Response({'status': 'success', 'funcionario': serializer.data}, status=status.HTTP_201_CREATED)
-    return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+class FuncionarioCreateView(generics.CreateAPIView):
+    """
+    Somente administradores podem criar funcionários.
+    """
+    serializer_class = FuncionarioCreateSerializer
+    permission_classes = [IsAdminUser]
 
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated])
-def editar_funcionario(request, funcionario_id):
-    funcionario = get_object_or_404(Funcionario, pk=funcionario_id)
-    serializer = FuncionarioSerializer(funcionario, data=request.data, partial=True)
-    if serializer.is_valid():
-        with transaction.atomic():
-            serializer.save()
-        return Response({'status': 'success', 'funcionario': serializer.data})
-    return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        serializer = FuncionarioCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def deletar_funcionario(request, funcionario_id):
-    funcionario = get_object_or_404(Funcionario, pk=funcionario_id, user=request.user)
-    with transaction.atomic():
-        funcionario.delete()
-    return Response({'status': 'success', 'message': f'Funcionário {funcionario_id} deletado com sucesso.'})
+        data = serializer.validated_data
+
+        # Criar usuário base
+        user = User.objects.create_user(
+            username=data["cpf_cnpj"],
+            password=data["password"],
+            first_name=data["first_name"],
+            email=data["email"],
+            cpf_cnpj=data["cpf_cnpj"],
+            telefone=data["telefone"],
+            logradouro=data["logradouro"],
+            cep=data["cep"],
+            cidade=data["cidade"],
+            estado=data["estado"],
+        )
+
+        # Funcionário sempre é staff
+        user.is_staff = True
+        user.save()
+
+        funcionario = Funcionario.objects.create(
+            user=user,
+            especialidade=data["especialidade"],
+            cargo=data["cargo"],
+            salario=data["salario"]
+        )
+
+        return Response(FuncionarioSerializer(funcionario).data, status=status.HTTP_201_CREATED)
+
+
+class FuncionarioListView(generics.ListAPIView):
+    """
+    Lista apenas funcionários com usuário ativo.
+    """
+    serializer_class = FuncionarioSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Funcionario.objects.filter(user__is_active=True)
+
+
+class FuncionarioDetailView(generics.RetrieveAPIView):
+    serializer_class = FuncionarioSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Funcionario.objects.filter(user__is_active=True)
+
+
+class FuncionarioUpdateView(generics.UpdateAPIView):
+    """
+    Atualiza informações do funcionário.
+    Dados de usuário também podem ser atualizados.
+    """
+    serializer_class = FuncionarioCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Funcionario.objects.filter(user__is_active=True)
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        funcionario = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # Atualizar USER
+        user = funcionario.user
+        user.first_name = data["first_name"]
+        user.email = data["email"]
+        user.telefone = data["telefone"]
+        user.logradouro = data["logradouro"]
+        user.cep = data["cep"]
+        user.cidade = data["cidade"]
+        user.estado = data["estado"]
+
+        # Funcionário deve continuar staff
+        user.is_staff = True
+        user.save()
+
+        # Atualizar funcionario
+        funcionario.especialidade = data["especialidade"]
+        funcionario.cargo = data["cargo"]
+        funcionario.salario = data["salario"]
+        funcionario.save()
+
+        return Response(FuncionarioSerializer(funcionario).data)
+
+
+class FuncionarioDeleteView(generics.DestroyAPIView):
+    """
+    DELETE apenas desativa o usuário.
+    """
+    queryset = Funcionario.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        funcionario = self.get_object()
+        funcionario.user.is_active = False
+        funcionario.user.save()
+        return Response({"detail": "Funcionário desativado."}, status=204)
