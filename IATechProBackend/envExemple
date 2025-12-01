@@ -1,0 +1,8 @@
+SECRET_KEY=sua_chave
+HOST_PG=seu_host
+DBNAME_PG=seu_dbname
+PORT_PG=5432
+DATABASE_PG=postgres
+USER_PG=seu_user
+PASSWORD_PG=sua_senha
+

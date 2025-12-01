@@ -6,3 +6,6 @@ PyJWT
 sqlparse
 tzdata
 drf-spectacular
+python-dotenv
+psycopg2
+supabase

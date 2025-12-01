@@ -24,7 +24,7 @@ class FuncionarioCreateView(generics.CreateAPIView):
 
         # Criar usuário base
         user = User.objects.create_user(
-            username=data["username"],
+            username=data["cpf_cnpj"],
             password=data["password"],
             first_name=data["first_name"],
             email=data["email"],
