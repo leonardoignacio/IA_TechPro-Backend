@@ -40,3 +40,4 @@ typing_extensions
 tzdata
 websockets
 yarl
+whitenoise
