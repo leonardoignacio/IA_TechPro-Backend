@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: django-api
+    env: python
+    buildCommand: "pip install -r requirements.txt && python manage.py migrate"
+    startCommand: "gunicorn IATechProBackend.wsgi"
+    envVars:
+      - key: SECRET_KEY
+        value: "sua_chave"
+      - key: HOST_PG
+        value: "seu_host"
+      - key: DBNAME_PG
+        value: "seu_dbname"
+      - key: PORT_PG
+        value: "5432"
+      - key: DATABASE_PG
+        value: "postgres"
+      - key: USER_PG
+        value: "seu_user"
+      - key: PASSWORD_PG
+        value: "sua_senha"
